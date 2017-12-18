@@ -30,7 +30,7 @@ public:
 		return res;
 	}
 
-	void set(int key, int value) {
+	void put(int key, int value) {
 		auto find = match.find(key);
 		if (find != match.end()) {
 			storage.erase(find->second);
