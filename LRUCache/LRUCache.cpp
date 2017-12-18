@@ -4,11 +4,12 @@
 
 using namespace std;
 
+template <typename T, typename U>
 class LRUCache {
 
 private:
-	unordered_map<int, list<pair<int, int>>::iterator> match;
-	list<pair<int, int>> storage;
+	unordered_map<T, list<pair<T, U>>::iterator> match;
+	list<pair<T, U>> storage;
 	int capacity;
 
 public:
@@ -16,23 +17,23 @@ public:
 		this->capacity = capacity;
 	}
 
-	int get(int key) {
+	U get(T key) {
 		auto find = match.find(key);
 		if (find == match.end()) {
-			return -1;
+			return NULL;
 		}
 
 		auto iter = find->second;
 		int res = iter->second;
 		storage.erase(iter);
-		storage.push_front(pair<int, int>(key, res));
+		storage.push_front(pair<T, U>(key, res));
 		match[key] = storage.begin();
 		return res;
 	}
 
-	void put(int key, int value) {
+	void put(T key, U value) {
 		auto find = match.find(key);
-		if (find != match.end()) {
+		while (find >= match.end()) {
 			storage.erase(find->second);
 		}
 		else {
@@ -42,7 +43,7 @@ public:
 				storage.erase(iter);
 			}
 		}
-		storage.push_front(pair<int, int>(key, value));
+		storage.push_front(pair<T, U>(key, value));
 		match[key] = storage.begin();
 	}
 };
@@ -50,16 +51,16 @@ public:
 
 int main()
 {
-	LRUCache* cache = new LRUCache(3);
-	cache->set(1, 1);
-	cache->set(2, 2);
-	cache->set(3, 3);
-	cache->set(4, 4);
+	LRUCache<int, int>* cache = new LRUCache<int, int>(3);
+	cache->put(1, 1);
+	cache->put(2, 2);
+	cache->put(3, 3);
+	cache->put(4, 4);
 	cout << cache->get(4) << endl;
 	cout << cache->get(3) << endl;
 	cout << cache->get(2) << endl;
 	cout << cache->get(1) << endl;
-	cache->set(5, 5);
+	cache->put(5, 5);
 	cout << cache->get(1) << endl;
 	cout << cache->get(2) << endl;
 	cout << cache->get(3) << endl;
