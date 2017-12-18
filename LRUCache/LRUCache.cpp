@@ -7,8 +7,8 @@ using namespace std;
 class LRUCache {
 
 private:
-	unordered_map<int, list<int>::iterator> match;
-	list<int> storage;
+	unordered_map<int, list<pair<int, int>>::iterator> match;
+	list<pair<int, int>> storage;
 	int capacity;
 
 public:
@@ -23,9 +23,9 @@ public:
 		}
 
 		auto iter = find->second;
-		int res = *iter;
+		int res = iter->second;
 		storage.erase(iter);
-		storage.push_front(res);
+		storage.push_front(pair<int, int>(key, res));
 		match[key] = storage.begin();
 		return res;
 	}
@@ -35,7 +35,14 @@ public:
 		if (find != match.end()) {
 			storage.erase(find->second);
 		}
-		storage.push_front(value);
+		else {
+			if (match.size() == capacity) {
+				auto iter = prev(storage.end());
+				match.erase(iter->first);
+				storage.erase(iter);
+			}
+		}
+		storage.push_front(pair<int, int>(key, value));
 		match[key] = storage.begin();
 	}
 };
